@@ -1,7 +1,7 @@
 let code='<html height="5" >hello world<div><input width="20px"/>is it still working</div  ></html>'
 let op:string[]=[]
 let myStack:string[]=[]
-
+let validTags:string[]=['html','head','body','div','input','p','h','button','span','img']
    ///////////////////////////
    let findClosingTagName=(i:number)=>{
        console.log("findig closing tag name")
@@ -10,15 +10,18 @@ let myStack:string[]=[]
            if(code[i]!=' ')
            k+=code[i]
        }
-       op.push("/"+k)
        if(myStack[myStack.length-1] == k){
            console.log("start & closing tags match..popping out ",k)
            myStack.pop()
+           op.push("/"+k)
                console.log("myStack is ",myStack)
        }else{
            console.log("start & closing tags DO NOT match")
-               console.log("myStack is ",myStack)
-               console.log("closing ele is ",k)
+               console.log("required : myStack is ",myStack)
+               console.log("found: closing ele is ",k)
+              //  if(!validTags.includes(k)){
+                op.push('/invalid tag')
+              //  }
        }
        return i
    }
@@ -32,9 +35,14 @@ let myStack:string[]=[]
                op[op.length-1]=""+tagname+"/"+" attr : {"+k+"} (self closing)"
                return i
            }else if(code[i]=='>'){
+            if(validTags.includes(op[op.length-1])){
                myStack.push(op[op.length-1])
                console.log("myStack is ",myStack)
                op[op.length-1]=""+tagname+" attr : {"+k+"}"
+            }else{
+              console.log("invalid tag found : ",op[op.length-1])
+               op[op.length-1]="invalid tag"
+            }
                return i
            }
            k+=code[i]
@@ -57,9 +65,14 @@ let myStack:string[]=[]
                return i
            }else if(code[i]=='>'){
                //if there are no spaces b/w tagname and ending symbol tag '>'
-               op.push(k)
+               if(validTags.includes(k)){
                myStack.push(k)
+               op.push(k)
                console.log("myStack is ",myStack)
+               }else{
+              console.log("invalid tag found : ",k)
+               op.push("invalid tag")
+            }
                return i
            }
            if(code[i]!=' ')
